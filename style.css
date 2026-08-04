@@ -1,0 +1,659 @@
+:root{
+    --background:#001219;
+    --card:#005F73;
+    --text:#94D2BD;
+    --secondary:#005F73;
+    --accent:#0A9396;
+}
+@font-face{
+    font-family:"Montserrat";
+    src:url("./fonts/Montserrat-Regular.otf")
+        format("opentype");
+    font-weight:400;
+    font-style:normal;
+}
+@font-face{
+    font-family:"Montserrat";
+    src:url("./fonts/Montserrat-Bold.otf")
+        format("opentype");
+    font-weight:700;
+    font-style:normal;
+}
+/* RESET */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+body{
+    background:var(--background);
+    color:var(--text);
+    font-family:"Montserrat",sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+/* HEADER */
+header{
+    padding:40px 70px;
+    display:flex;
+    justify-content:center;
+}
+.logo{
+    font-size:42px;
+    font-family:"Montserrat",sans-serif;
+    font-weight:700;
+    letter-spacing:0px;
+}
+.logo span{
+    color:var(--accent);
+}
+/* HERO */
+.hero{
+    margin-top:40px;
+    text-align:center;
+    padding:0 20px;
+    margin-bottom: 40px;
+}
+.hero h1{
+    font-size:52px;
+    font-family:"Montserrat",sans-serif;
+    margin-bottom:15px;
+}
+.hero p{
+    color:var(--secondary);
+    font-size:20px;
+}
+/* SEARCH */
+.search-section{
+    display:flex;
+    justify-content:center;
+    margin-top:50px;
+}
+#searchInput{
+    width:min(700px,90vw);
+    background:transparent;
+    border:none;
+    outline:none;
+    padding:22px 28px;
+    border-radius:999px;
+    font-size:18px;
+    color:#E9D8A6;
+    font-family:"Montserrat",sans-serif;
+}
+#searchInput:focus{
+    box-shadow:0 0 0 2px #005F73;
+}
+/* MAIN */
+main{
+    width:min(1500px,92vw);
+    margin:auto;
+    padding:70px 0;
+}
+#movieGrid{
+    display:grid;
+    grid-template-columns:
+        repeat(auto-fill,minmax(210px,1fr));
+    gap:26px;
+}
+/* MOVIE CARDS */
+.movie-card{
+    position:relative;
+    background:var(--card);
+    border-radius:18px;
+    overflow:hidden;
+    aspect-ratio:2/3;
+    cursor:pointer;
+    transition:
+        transform .35s ease,
+        box-shadow .35s ease;
+}
+.movie-card:hover{
+    box-shadow:
+        0 0 18px rgba(255,255,255,.22),
+        0 0 45px rgba(255,255,255,.16),
+        0 0 80px rgba(255,255,255,.10),
+        0 20px 50px rgba(0,0,0,.35);
+
+    transform:
+        translateY(-10px)
+        scale(1.04);
+}
+.movie-poster{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    transition:
+        transform .45s ease,
+        filter .45s ease,
+        opacity .35s ease;
+}
+.movie-card:hover .movie-poster{
+    transform:scale(1.08);
+     filter:blur(2.5px) brightness(0.7);
+}
+/* INFO GRADIENT */
+.movie-gradient h3{
+    font-size:20px;
+    margin-bottom:6px;
+    line-height:1.2;
+    color:#E9D8A6;
+}
+.movie-gradient h3::after{
+    content:"";
+    display:block;
+    width:40px;
+    height:2px;
+    margin-top:8px;
+    background:#E9D8A6;
+}
+.movie-gradient p{
+    color:#bbb;
+    font-size:14px;
+}
+.genres{
+    margin-top:8px;
+    color:#d0d0d0;
+    font-size:12px;
+    letter-spacing:.03em;
+}
+/* DELETE BUTTON */
+.deleteButton{
+    position:absolute;
+    top:12px;
+    right:12px;
+    width:38px;
+    height:38px;
+    border:none;
+    border-radius:50%;
+    background:rgba(0,0,0,.75);
+    color:#E9D8A6;
+    cursor:pointer;
+    opacity:0;
+    transform:scale(.8);
+    transition:.25s;
+    z-index:10;
+}
+.movie-card:hover .deleteButton{
+    opacity:1;
+    transform:scale(1);
+}
+.deleteButton:hover{
+    background:#C0392B;
+}
+/* EMPTY STATE */
+.empty-state{
+    grid-column:1/-1;
+    text-align:center;
+    color:#888;
+    font-size:22px;
+    padding:80px 0;
+}
+/* RANDOM MOVIE */
+#randomMovieButton{
+    position:fixed;
+    right:40px;
+    bottom:130px;
+    width:72px;
+    height:72px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:none;
+    border-radius:50%;
+    background:rgba(23,23,23,.75);
+    backdrop-filter:blur(10px);
+    color:#E9D8A6;
+    font-size:30px;
+    cursor:pointer;
+    z-index:1000;
+    transition:.3s;
+}
+#randomMovieButton:hover{
+    transform:scale(1.08);
+}
+#randomMovieModal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.9);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:3000;
+}
+#randomMovieModal.show{
+    display:flex;
+}
+.randomMovieContent::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        linear-gradient(
+            to top,
+            rgba(0,0,0,.85),
+            rgba(0,0,0,.45),
+            rgba(0,0,0,.1)
+        );
+    z-index:1;
+    pointer-events:none;
+}
+.randomMovieInfo{
+    position:relative;
+    z-index:2;
+}
+.randomMovieContent{
+    position:relative;
+    width:min(1000px,90vw);
+    height:600px;
+    border-radius:24px;
+    overflow:hidden;
+    display:flex;
+    align-items:flex-end;
+    background-size:cover;
+    background-position:center;
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.6);
+}
+#randomMoviePoster{
+    width:220px;
+    border-radius:12px;
+}
+#randomMovieTitle{
+    margin-top:20px;
+    font-size:3rem;
+    margin-bottom:20px;
+}
+#randomMovieOverview{
+    margin-top:15px;
+    line-height:1.8;
+    font-size:1.05rem;
+}
+#rerollMovie{
+    margin-top:20px;
+    padding:12px 20px;
+    border:none;
+    border-radius:12px;
+    background:var(--accent);
+    color:#E9D8A6;
+    cursor:pointer;
+}
+#closeRandomMovie{
+    position:absolute;
+    top:20px;
+    right:20px;
+    z-index:999;
+    cursor:pointer;
+    color:#E9D8A6;
+    font-size:28px;
+}
+/* ADD BUTTON */
+#addMovieButton{
+    position:fixed;
+    right:40px;
+    bottom:40px;
+    width:72px;
+    height:72px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    border:none;
+    background:var(--accent);
+    color:#E9D8A6;
+    font-size:60px;
+    line-height:1;
+    cursor:pointer;
+    z-index:1000;
+    font-family:"Montserrat",sans-serif;
+}
+#addMovieButton:hover{
+    transform:scale(1.08);
+}
+#scrollTopButton{
+    position:fixed;
+    left:40px;
+    bottom:40px;
+    width:72px;
+    height:72px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:none;
+    border-radius:50%;
+    background:rgba(23,23,23,0.25);
+    backdrop-filter:blur(3px);
+    color:#0A9396;
+    font-size:32px;
+    cursor:pointer;
+    z-index:1000;
+    opacity:0;
+    visibility:hidden;
+    transition:
+        opacity .25s ease,
+        transform .25s ease;
+}
+#scrollTopButton.show{
+    opacity:1;
+    visibility:visible;
+}
+#scrollTopButton:hover{
+    transform:scale(1.08);
+}
+/* MODAL */
+#modalOverlay.hidden{
+    display:none;
+}
+#modalOverlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.75);
+    backdrop-filter:blur(12px);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:.25s;
+}
+#modalOverlay.show{
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+}
+#addMovieModal{
+    width:min(750px,90vw);
+    max-height:80vh;
+    overflow-y:auto;
+    background:#161616;
+    border-radius:24px;
+    padding:35px;
+}
+#addMovieModal h2{
+    font-size:34px;
+    margin-bottom:25px;
+}
+#modalSearch{
+    width:100%;
+    padding:18px 22px;
+    border-radius:999px;
+    border:none;
+    outline:none;
+    background:#202020;
+    color:#E9D8A6;
+    font-size:17px;
+}
+#closeModal{
+    position:absolute;
+    right:22px;
+    top:22px;
+    background:none;
+    border:none;
+    color:#E9D8A6;
+    font-size:24px;
+    cursor:pointer;
+}
+/* SEARCH RESULTS */
+#searchResults{
+    margin-top:30px;
+    display:grid;
+    gap:15px;
+}
+.search-card{
+    display:flex;
+    gap:20px;
+    align-items:center;
+    background:#1E1E1E;
+    border-radius:18px;
+    padding:15px;
+    cursor:pointer;
+    transition:.25s;
+}
+.search-card:hover{
+    transform:scale(1.02);
+    background:#262626;
+}
+.search-card img{
+    width:90px;
+    height:135px;
+    object-fit:cover;
+    border-radius:12px;
+}
+.search-info h3{
+    font-size:20px;
+    margin-bottom:8px;
+}
+.search-info p{
+    color:#B0B0B0;
+}
+/* ANIMATION */
+.movie-card{
+    animation:fadeIn .35s ease;
+    transition:
+    transform .3s ease,
+    box-shadow .3s ease;
+}
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+    to{
+        opacity:1;
+        transform:none;
+    }
+}
+/* MOBILE */
+@media(max-width:700px){
+    header{
+        padding:30px;
+    }
+    .hero h1{
+        font-size:34px;
+    }
+}
+.movie-card::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0);
+    transition:.3s;
+    z-index:2;
+}
+.deleteBanner{
+    position:fixed;
+    left:50%;
+    bottom:40px;
+    transform:translateX(-50%);
+    background:#171717;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:20px;
+    padding:18px 22px;
+    display:flex;
+    align-items:center;
+    gap:20px;
+    z-index:5000;
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.5);
+    transition:.25s;
+}
+.deleteBanner.hidden{
+    opacity:0;
+    visibility:hidden;
+    transform:
+        translateX(-50%)
+        translateY(20px);
+}
+.deleteActions{
+    display:flex;
+    gap:10px;
+}
+.deleteActions button{
+    border:none;
+    padding:10px 18px;
+    border-radius:999px;
+    cursor:pointer;
+}
+#cancelDelete{
+    background:#2A2A2A;
+    color:#E9D8A6;
+}
+#confirmDelete{
+    background:#C0392B;
+    color:#E9D8A6;
+}
+.movie-gradient{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    padding:20px;
+    
+    z-index:4;
+    opacity:0;
+    transition: opacity .3s ease;
+    pointer-events:none;
+}
+.movieSynopsis{
+    position:absolute;
+    top:20px;
+    left:20px;
+    right:20px;
+    z-index:5;
+    font-size:13px;
+    line-height:1.5;
+    color:#E9D8A6;
+    opacity:0;
+    transition:opacity .3s ease;
+    pointer-events:none;
+    display:-webkit-box;
+    -webkit-line-clamp:5;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+}
+.movie-card:hover .movie-gradient{
+    opacity:1;
+    background:
+        linear-gradient(
+            to top,
+            rgba(0,0,0,0.92),
+            rgba(0,0,0,0.45),
+            transparent 80%
+        );}
+.movie-card:hover .movieSynopsis{
+    opacity:1;
+}
+#moviePreviewOverlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.9);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:10000;
+}
+#moviePreviewOverlay.hidden{
+    display:none;
+}
+#moviePreviewContent{
+    width:min(90vw,1600px);
+    height:min(90vh,900px);
+    background:#111;
+    border-radius:24px;
+    overflow:hidden;
+    position:relative;
+}
+.previewTrailer{
+    height:70%;
+}
+.previewTrailer iframe{
+    width:100%;
+    height:100%;
+    border:none;
+}
+.previewInfo{
+    padding:30px;
+    max-height:30vh;
+    overflow-y:auto;
+}
+#closePreview{
+    position:absolute;
+    top:20px;
+    right:20px;
+    width:50px;
+    height:50px;
+    border:none;
+    border-radius:50%;
+    background:rgba(0,0,0,.8);
+    color:#E9D8A6;
+    font-size:24px;
+    cursor:pointer;
+    z-index:100;
+}
+.previewMeta{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+    opacity:.8;
+}
+.director,
+.cast{
+    margin-bottom:12px;
+    line-height:1.5;
+}
+.overview{
+    margin-top:20px;
+    max-width:900px;
+    line-height:1.7;
+}
+.streaming{
+    margin-top:15px;
+    margin-bottom:15px;
+    line-height:1.6;
+}
+.topControls{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    margin-bottom:30px;
+    max-width:1400px;
+    margin-left:auto;
+    margin-right:auto;
+    padding:0 30px;
+    font-family:"Montserrat",sans-serif;
+}
+#searchInput{
+    flex:1;
+}
+.filterButton{
+    background:transparent;
+    color:#E9D8A6;
+    border:1px solid rgba(245,240,232,0.25);
+    padding:12px 20px;
+    border-radius:999px;
+    font-size:0.9rem;
+    font-weight:500;
+    cursor:pointer;
+    transition:all 0.25s ease;
+    font-family:"Montserrat",sans-serif;
+}
+.filterButton:hover{
+    border-color:#005F73;
+    color:#0A9396;
+    transform:translateY(-1px);
+}
+.filterButton.active{
+    background:#005F73;
+    border-color:#005F73;
+    color:#0A9396;
+}
+#randomMovieStreaming{
+    margin-top:18px;
+    font-size:0.95rem;
+    color:#E9D8A6;
+    line-height:1.5;
+}
